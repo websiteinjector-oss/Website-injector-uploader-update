@@ -1,0 +1,311 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APK Injector </title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f7fa;
+  color: #333;
+}
+
+.header {
+  background: #1e88e5;
+  color: white;
+  padding: 20px 15px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.main-tabs {
+  display: flex;
+  background: #1565c0;
+}
+
+.main-tabs button {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  background: #1565c0;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.main-tabs button:hover {
+  background: #1e88e5;
+}
+
+.tab {
+  display: none;
+  padding: 15px;
+}
+
+.home-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin: 15px 0;
+}
+
+.home-tabs button {
+  flex: 1;
+  margin: 0 5px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #2196f3;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.home-tabs button:hover {
+  background: #42a5f5;
+}
+
+.apk {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  transition: 0.3s;
+}
+
+.apk:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.apk img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.progress-container {
+  width: 100%;
+  background: #e0e0e0;
+  border-radius: 8px;
+  margin-top: 10px;
+  position: relative;
+  height: 20px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  background: #4caf50;
+  border-radius: 8px;
+  transition: width 0.3s;
+}
+
+.progress-text {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  font-size: 13px;
+  color: #000;
+  font-weight: 500;
+}
+
+button {
+  margin: 5px 2px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+button.like-btn { background: #2196f3; color: white; }
+button.delete-btn { background: #f44336; color: white; }
+button.report-btn { background: #ff9800; color: white; }
+button.comment-btn { background: #9c27b0; color: white; }
+button.download-btn { background: #4caf50; color: white; }
+
+input, textarea {
+  width: 95%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 12px;
+  max-height: 80%;
+  overflow-y: auto;
+}
+
+#notification {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background: #1e88e5;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 8px;
+  display: none;
+  z-index: 999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+#profilePic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+#coverPhoto {
+  width: 100%;
+  height: 150px;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.home-tab {
+  padding-bottom: 15px;
+}
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<div id="notification"></div>
+
+<!-- LOGIN -->
+<div id="login">
+<h2 style="text-align:center;">uploader Injector Login</h2>
+<input id="user" placeholder="Username"><br>
+<input type="password" id="password" placeholder="Password"><br>
+<input type="email" id="email" placeholder="Email"><br>
+<input id="telegram" placeholder="Telegram Username"><br><br>
+<div id="captcha" style="font-weight:bold;font-size:18px;"></div>
+<input id="capInput" placeholder="Enter CAPTCHA"><br><br>
+<button onclick="login()" style="width:100%;padding:10px;">Login</button>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+<div class="header">UPLOADER INJECTOR</div>
+<div class="main-tabs">
+  <button onclick="showTab('home')">Home</button>
+  <button onclick="showTab('upload')">Upload</button>
+  <button onclick="showTab('profile')">Profile</button>
+  <button onclick="showTab('messenger')">Messenger</button>
+</div>
+
+<!-- HOME -->
+<div id="home" class="tab">
+<input class="search" id="search" placeholder="Search APK" oninput="render()"><br>
+<div class="home-tabs">
+<button onclick="switchHomeTab('latest')">Latest Upload</button>
+<button onclick="switchHomeTab('top')">Most Downloaded</button>
+<button onclick="switchHomeTab('my')">My Uploads</button>
+</div>
+<div id="latest" class="home-tab"></div>
+<div id="top" class="home-tab"></div>
+<div id="my" class="home-tab"></div>
+</div>
+
+<!-- UPLOAD -->
+<div id="upload" class="tab">
+<h2>Upload APK</h2>
+<input id="name" placeholder="App Name"><br>
+<textarea id="desc" placeholder="Description"></textarea><br>
+<input id="apk" placeholder="MediaFire APK Link"><br>
+<input id="telegramUpload" placeholder="Your Telegram link"><br>
+<label>Choose Icon:</label>
+<input type="file" id="iconFile" accept="image/*" onchange="showPreview(event)"><br>
+<img id="previewIcon" style="width:100px;height:100px;border-radius:10px;"><br>
+<button onclick="upload()">Upload APK</button>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="tab">
+<h2>Profile</h2>
+<img id="coverPhoto" style="width:100%;height:120px;border-radius:10px;background:#ccc;"><br>
+<input type="file" id="coverFile" onchange="updateCover()"><br>
+<img id="profilePic" style="width:80px;height:80px;border-radius:50%;"><br>
+<input type="file" id="profilePicFile"><br>
+<p><b>Username:</b> <span id="profileName"></span></p>
+<p><b>Email:</b> <span id="profileEmail"></span></p>
+<p><b>Telegram:</b> <span id="profileTelegram"></span></p>
+<p><b>Likes:</b> <span id="profileLikes">0</span></p>
+<p><b>Comments:</b> <span id="profileComments">0</span></p>
+<p><b>Downloads:</b> <span id="profileDownloads">0</span></p>
+<button onclick="changeUsername()">Change Username</button>
+<button onclick="changePassword()">Change Password</button>
+<button onclick="logout()">Logout</button>
+</div>
+
+<!-- MESSENGER -->
+<div id="messenger" class="tab">
+<h2>Messenger</h2>
+<input id="friendSearchInput" placeholder="Search user"><button onclick="addFriend()">Add Friend</button>
+<h3>Friend Requests</h3>
+<div id="friendRequests"></div>
+<h3>Friends</h3>
+<div id="friendList"></div>
+</div>
+
+<!-- COMMENT MODAL -->
+<div id="commentModal" class="modal">
+<div class="modal-content">
+<h3>Comments</h3>
+<div id="commentList" style="max-height:300px;overflow-y:auto;"></div>
+<input id="newComment" placeholder="Write a comment"><button onclick="postComment()">Post</button>
+<button onclick="closeCommentModal()">Close</button>
+</div>
+</div>
+
+<!-- CHAT MODAL -->
+<div id="chatModal" class="modal">
+<div class="modal-content">
+<h3>Chat with <span id="chatWith"></span></h3>
+<div id="chatMessages" style="max-height:300px;overflow-y:auto;"></div>
+<input id="chatInput" placeholder="Type a message"><button onclick="sendMessage()">Send</button>
+<button onclick="closeChatModal()">Close</button>
+</div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
